@@ -18,13 +18,17 @@ const prefix = process.env.PREFIX || '!';
 const delay = parseInt(process.env.DELAY, 10) || 1000;
 
 // Define a variable to store the ID of the last added emoji
-let lastAddedEmojiId = null;
+let lastAddedEmojiId = null;  // also resets it if the code reloads
 
 client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
+
+    client.user.setPresence({status: "dnd"}); //sets presence
+    client.user.setActivity('GG', { type: 'WATCHING' }); //sets activity AND IT FUCKING DOSENT WORK IDK WHY
 });
 
-client.on('messageCreate', async message => {
+
+client.on('messageCreate', async message => {  //this needs better way to handle commands maybe in the feature
     if (message.author.bot) return;
 
     const botMention = `<@!${client.user.id}>`;
@@ -41,6 +45,11 @@ client.on('messageCreate', async message => {
 
     const args = message.content.slice(prefix.length).trim().split(/ +/);
     const command = args.shift().toLowerCase();
+    
+    if (command === 'help') {
+        message.reply(`**Help Menu**\n \`${prefix}help\` This very same menu.\n \`${prefix}info\` Information about me.\n \`${prefix}addemoji\` Adds emoji from another server or an image.\n \`${prefix}delemoji\` Deletes the last added emoji or the one afther the command.\n\n**Thats it**`);
+        return;
+    }
 
     if (command === 'info') {
         message.channel.send('**GitHub Repository:** https://github.com/JAC-dp/OpenEmote\n**Discord:** @dankata1337\n**This discord bot is fully opensorce, all comits are wellcome**');
@@ -118,7 +127,7 @@ client.on('messageCreate', async message => {
 
                 // Update lastAddedEmojiId with the ID of the emoji just added
                 lastAddedEmojiId = null; // Reset lastAddedEmojiId after adding attachment (as name is dynamic)
-            } catch (error) {
+            } catch (error) {  //maybe better error handaling, who cares it spits the errors in runtime
                 if (error.message.includes('rate limit')) {
                     console.error('Discord API rate limit:', error);
                     message.reply('Discord API rate limit exceeded. Please wait and try again later.');
@@ -185,4 +194,4 @@ function delayExecution(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN);  //the only simple thing in this codebase
