@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, Partials } from 'discord.js';
+import { Client, GatewayIntentBits, Partials, PermissionsBitField } from 'discord.js';
 import fetch from 'node-fetch';
 import sharp from 'sharp';
 import dotenv from 'dotenv';
@@ -27,7 +27,6 @@ client.once('ready', () => {
     client.user.setActivity('GG', { type: 'WATCHING' }); //sets activity AND IT FUCKING DOSENT WORK IDK WHY
 });
 
-
 client.on('messageCreate', async message => {  //this needs better way to handle commands maybe in the feature
     if (message.author.bot) return;
 
@@ -47,7 +46,7 @@ client.on('messageCreate', async message => {  //this needs better way to handle
     const command = args.shift().toLowerCase();
     
     if (command === 'help') {
-        message.reply(`**Help Menu**\n \`${prefix}help\` This very same menu.\n \`${prefix}info\` Information about me.\n \`${prefix}addemoji\` Adds emoji from another server or an image.\n \`${prefix}delemoji\` Deletes the last added emoji or the one afther the command.\n\n**Thats it**`);
+        message.reply(`**Help Menu**\n \`${prefix}help\` This very same menu.\n \`${prefix}info\` Information about me.\n \`${prefix}addemoji\` Adds emoji from another server or an image.\n \`${prefix}delemoji\` Deletes the last added emoji or the one afther the command.\n \`${prefix}lockemoji\` Locks specified emoji(s) to a role.\n \`${prefix}unlockemoji\` Unocks specified emoji(s).\n\n**Thats it**`);
         return;
     }
 
@@ -57,7 +56,7 @@ client.on('messageCreate', async message => {  //this needs better way to handle
     }
 
     if (command === 'addemoji') {
-        if (!message.member.permissions.has('MANAGE_EMOJIS_AND_STICKERS')) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageEmojisAndStickers)) {
             return message.reply('You do not have permission to manage emojis.');
         }
 
@@ -141,7 +140,7 @@ client.on('messageCreate', async message => {  //this needs better way to handle
     }
 
     if (command === 'delemoji') {
-        if (!message.member.permissions.has('MANAGE_EMOJIS_AND_STICKERS')) {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageEmojisAndStickers)) {
             return message.reply('You do not have permission to manage emojis.');
         }
 
@@ -185,6 +184,79 @@ client.on('messageCreate', async message => {  //this needs better way to handle
                     console.error('Error deleting emoji:', error);
                     message.reply(`Failed to delete emoji: ${emojiName}. Error: ${error.message}`);
                 }
+            }
+        }
+    }
+
+    if (command === 'lockemoji') {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+            return message.reply('You do not have permission to manage roles.');
+        }
+
+        const roleMention = message.mentions.roles.first();
+        if (!roleMention) {
+            return message.reply('Please mention a role to lock the emojis to.');
+        }
+
+        const emojis = args.filter(arg => !arg.startsWith('<@&')); // Filter out role mentions
+        if (emojis.length === 0) {
+            return message.reply('Please provide at least one emoji to lock.');
+        }
+
+        for (const emoji of emojis) {
+            try {
+                const parsedEmoji = emoji.match(/<:.+:(\d+)>|<a:.+:(\d+)>/);
+                if (!parsedEmoji) {
+                    message.reply(`Invalid emoji format: ${emoji}`);
+                    continue;
+                }
+
+                const emojiId = parsedEmoji[1] || parsedEmoji[2];
+                const emojiToLock = message.guild.emojis.cache.get(emojiId);
+                if (!emojiToLock) {
+                    message.reply(`Emoji not found: ${emoji}`);
+                    continue;
+                }
+
+                await emojiToLock.roles.set([roleMention]);
+                message.reply(`Emoji ${emoji} locked to role ${roleMention.name}.`);
+            } catch (error) {
+                console.error('Error locking emoji:', error);
+                message.reply(`Failed to lock emoji: ${emoji}. Error: ${error.message}`);
+            }
+        }
+    }
+
+    if (command === 'unlockemoji') {
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+            return message.reply('You do not have permission to manage roles.');
+        }
+
+        const emojis = args;
+        if (emojis.length === 0) {
+            return message.reply('Please provide at least one emoji to unlock.');
+        }
+
+        for (const emoji of emojis) {
+            try {
+                const parsedEmoji = emoji.match(/<:.+:(\d+)>|<a:.+:(\d+)>/);
+                if (!parsedEmoji) {
+                    message.reply(`Invalid emoji format: ${emoji}`);
+                    continue;
+                }
+
+                const emojiId = parsedEmoji[1] || parsedEmoji[2];
+                const emojiToUnlock = message.guild.emojis.cache.get(emojiId);
+                if (!emojiToUnlock) {
+                    message.reply(`Emoji not found: ${emoji}`);
+                    continue;
+                }
+
+                await emojiToUnlock.roles.set([]);
+                message.reply(`Emoji ${emoji} unlocked.`);
+            } catch (error) {
+                console.error('Error unlocking emoji:', error);
+                message.reply(`Failed to unlock emoji: ${emoji}. Error: ${error.message}`);
             }
         }
     }
