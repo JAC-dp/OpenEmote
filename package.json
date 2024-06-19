@@ -1,7 +1,7 @@
 {
-  "name": "custom-emoji-manager",
+  "name": "OpenEmote",
   "version": "1.0.0",
-  "description": "",
+  "description": "opensorce version of Emote Manager writen in nodejs from scratch",
   "main": "index.js",
   "type": "module",
   "scripts": {

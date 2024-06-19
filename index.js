@@ -43,7 +43,7 @@ client.on('messageCreate', async message => {
     const command = args.shift().toLowerCase();
 
     if (command === 'info') {
-        message.channel.send('**GitHub Repository:** <link_to_your_github_repo>\n**Contact:** Your contact information');
+        message.channel.send('**GitHub Repository:** https://github.com/JAC-dp/OpenEmote\n**Discord:** @dankata1337\n**This discord bot is fully opensorce, all comits are wellcome**');
         return;
     }
 
