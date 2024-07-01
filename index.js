@@ -46,7 +46,7 @@ client.on('messageCreate', async message => {  //this needs better way to handle
     const command = args.shift().toLowerCase();
     
     if (command === 'help') {
-        message.reply(`**Help Menu**\n \`${prefix}help\` This very same menu.\n \`${prefix}info\` Information about me.\n \`${prefix}addemoji\` Adds emoji from another server or an image.\n \`${prefix}delemoji\` Deletes the last added emoji or the one afther the command.\n \`${prefix}lockemoji\` Locks specified emoji(s) to a role.\n \`${prefix}unlockemoji\` Unocks specified emoji(s).\n\n**Thats it**`);
+        message.reply(`**Help Menu**\n \`${prefix}help\` This very same menu.\n \`${prefix}info\` Information about me.\n \`${prefix}addemoji\` Adds emoji from another server or an image.\n \`${prefix}delemoji\` Deletes the last added emoji or the one afther the command.\n \`${prefix}lockemoji\` Locks specified emoji(s) to a role.\n \`${prefix}unlockemoji\` Unocks specified emoji(s).\n \`${prefix}unlockemoji-all\` Unlocks all emojis.\n\n**Thats it**`);
         return;
     }
 
@@ -258,6 +258,25 @@ client.on('messageCreate', async message => {  //this needs better way to handle
                 console.error('Error unlocking emoji:', error);
                 message.reply(`Failed to unlock emoji: ${emoji}. Error: ${error.message}`);
             }
+        }
+    }
+    
+    if (command === 'unlockemoji-all') {  //god forbid you use this command //untested btw use at your own risk
+        if (!message.member.permissions.has(PermissionsBitField.Flags.ManageRoles)) {
+            return message.reply('You do not have permission to manage roles.');
+        }
+
+        try {
+            const emojis = message.guild.emojis.cache;
+
+            for (const emoji of emojis.values()) {
+                await emoji.roles.set([]);
+            }
+
+            message.reply('All emojis have been unlocked.');
+        } catch (error) {
+            console.error('Error unlocking all emojis:', error);
+            message.reply(`Failed to unlock all emojis. Error: ${error.message}`);
         }
     }
 });
