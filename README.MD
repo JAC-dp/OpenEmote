@@ -7,6 +7,7 @@ An open-source version of Emote Manager written from scratch in Node.js.
 - [Description](#description)
 - [Features](#features)
 - [Installation](#installation)
+- [Docker](#docker)
 - [Usage](#usage)
 - [Contributing](#contributing)
 
@@ -26,7 +27,7 @@ To get started with OpenEmote, follow these steps:
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/OpenEmote.git
+    git clone https://github.com/JAC-dp/OpenEmote.git
     cd OpenEmote
     ```
 
@@ -48,10 +49,25 @@ To start the application, run:
 ```sh
 node index.js
 ```
-Alternatively, you can use Docker for containerized deployment:
-```sh
-docker-compose up
-```
+
+## Docker
+
+For docker deployments
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/JAC-dp/OpenEmote.git
+    cd OpenEmote
+    ```
+
+2. Create a `.env` file from the example:
+    ```sh
+    cp example.env .env
+    ```
+
+3. Build the docker image
+    ```sh
+    docker-compose up -d
+    ```
 
 ## Contributing
 All contributions are welcome!!!
