@@ -34,6 +34,9 @@ const commands = [
         .setName('info')
         .setDescription('Shows information about the bot and its creator'),
     new SlashCommandBuilder()
+        .setName('invite')
+        .setDescription('Get the bot\'s invite link to add it to your server'),
+    new SlashCommandBuilder()
         .setName('steal')
         .setDescription('Steal emojis from other servers or add custom emojis')
         .addStringOption(option =>
@@ -128,7 +131,8 @@ client.on('interactionCreate', async interaction => {
                         { name: '/restrict', value: 'Restrict emoji usage to specific roles', inline: true },
                         { name: '/restrict-list', value: 'Show all restricted emojis and their roles', inline: true },
                         { name: '/unrestrict', value: 'Remove role restrictions from an emoji', inline: true },
-                        { name: '/unrestrict-all', value: 'Remove role restrictions from all emojis', inline: true }
+                        { name: '/unrestrict-all', value: 'Remove role restrictions from all emojis', inline: true },
+                        { name: '/invite', value: 'Get the bot\'s invite link to add it to your server', inline: true }
                     )
                     .setFooter({ text: 'Note: You need Manage Emojis permission to use these commands' });
                 await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
@@ -147,6 +151,19 @@ client.on('interactionCreate', async interaction => {
                         { name: 'License', value: 'This bot is fully open source and free to use. Feel free to contribute to its development!', inline: false }
                     );
                 await interaction.reply({ embeds: [infoEmbed], ephemeral: true });
+                break;
+
+            case 'invite':
+                const inviteEmbed = new EmbedBuilder()
+                    .setColor('#0099ff')
+                    .setTitle('Invite OpenEmote')
+                    .setDescription('Add OpenEmote to your server!')
+                    .setThumbnail(client.user.displayAvatarURL())
+                    .addFields(
+                        { name: 'Invite Link', value: `[Click here to invite](https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=8&scope=bot%20applications.commands)`, inline: false },
+                        { name: 'Required Permissions', value: '• Manage Emojis and Stickers\n• Manage Roles\n• Send Messages\n• Embed Links\n• Attach Files', inline: false }
+                    );
+                await interaction.reply({ embeds: [inviteEmbed] });
                 break;
 
             case 'steal':
