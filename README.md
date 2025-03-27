@@ -2,6 +2,8 @@
 
 A powerful Discord bot for managing emojis with advanced features like role-based restrictions and emoji stealing. Built with ❤️ and Node.js!
 
+[![Docker Image](https://img.shields.io/badge/docker%20image-available-blue?logo=docker)](https://github.com/JAC-dp/OpenEmote/pkgs/container/openemote)
+
 ## ✨ Features
 
 - 🎨 **Emoji Management**
