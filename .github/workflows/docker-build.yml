@@ -3,8 +3,20 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'index.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
+      - '.github/workflows/docker-build.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'index.js'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'Dockerfile'
+      - '.github/workflows/docker-build.yml'
 
 jobs:
   build:
